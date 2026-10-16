@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yard South Proposal (application withdrawn Nov. 4, 2024) — Protect South Portland</title>
+<meta name="description" content="Archived: PSP's health and safety concerns about the 2024 Yard South development, with talking points, sea level rise notes, reports and articles. The zoning and contract-zone application was withdrawn effective Nov. 4, 2024.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">Past work</span>
+    <h1>Yard South Proposal</h1>
+    <div class="prose">
+      <p class="lede">&ldquo;Yard South&rdquo; was the name on the mixed waterfront development proposed at 149/159 Front Street and neighboring parcels, beside Bug Light Park. Its owner, L&amp;R Northpoint Holdings LLC (PK Realty Management), filed the zoning map, zoning text and contract-zone amendments on July 31, 2024, aiming to enable up to 1,200 residential units, 216,400 square feet of nonresidential use and 100 hotel rooms. The applicant <strong>withdrew the application effective Nov. 4, 2024</strong>; the City&rsquo;s record states no further processing will occur. The record stays public on the City&rsquo;s <a href="https://www.southportland.gov/252/Major-Projects">Major Projects page</a>, which links <a href="https://drive.google.com/file/d/19RbilT6Z65xpmUSaI5KUlXpTgs3-u6oi/view?usp=sharing">the withdrawal letter</a>.</p>
+      <p>The withdrawal ends the application, but not the land question: PK Realty said afterward it is &ldquo;pursuing other options&rdquo; for the property, so a resubmission under different terms remains possible. Separately, the South Portland Housing Development Corporation filed its own application (May 6, 2024, PID 2165) to build soil-cover systems on 2.03 acres at 149A Front Street with EPA Brownfield Cleanup funding and DEP/USEPA oversight; the City notes that action on the soil-cover application is <em>&ldquo;not an approval or any indication of support&rdquo;</em> for any Yard South requests.</p>
+      <p>Protect South Portland&rsquo;s mission is to promote actions and practices that serve to protect the environment and the health and welfare of South Portland. We felt this included the health and welfare of potential future residents of our city.</p>
+      <p>The proposed development had many issues that PSP felt needed to be addressed before the city could even consider changing the zoning in that area to allow three or four 18-story high-rises that could house 2,000 or more people.</p>
+      <p>In addition to the dangerous health impacts of tank fumes on people living near these tanks, sea level rise and climate-driven natural disasters could hit the proposed housing and the low-lying tanks alike. Storm surges could flood the foundations of the tanks, releasing toxins or dislodging the tanks. The areas surrounding the tanks are at risk of catastrophic events which include explosions and/or fires that would require emergency evacuation.</p>
+      <p>Below are some of the well-researched reasons and disturbing unknowns PSP put before the Planning Board and our representatives on the City Council.</p>
+      <figure class="figure">
+        <img src="assets/photos/yard-south-map.png" alt="Map of South Portland's Shipyard district and the proposed Yard South parcel" loading="lazy">
+        <figcaption>The Shipyard district on South Portland&rsquo;s waterfront, site of the proposed Yard South development.</figcaption>
+      </figure>
+      <figure class="figure figure--half">
+        <img src="assets/photos/yard-south-zone.png" alt="Plan drawing of the tank farms and zoning parcels around the Yard South site" loading="lazy">
+        <figcaption>Tank farms and zoning parcels around the Yard South site.</figcaption>
+      </figure>
+
+      <h2>Talking points PSP brought to the Planning Board and City Council</h2>
+      <ul>
+        <li>We don&rsquo;t know the threats from climate change and water inundation to above-ground petroleum infrastructure and buried petroleum infrastructure.</li>
+        <li>We need to know what percentage of the coast of So. Portland has decades-old petroleum infrastructure that will need to be protected.</li>
+        <li>Petroleum sludge was buried on the site of tank farms until 1968.</li>
+        <li>Before 1980, no law required spills or hazardous-waste treatment to be recorded. Unidentified sources of contamination may leach into soils and our harbor during extreme weather events and sea level rise.</li>
+        <li>Residents at the fence line of the Yard South property would be exposed to Hazardous Air Pollutants (HAPs) and Volatile Organic Compounds (VOCs) in two ways: constant direct venting of petroleum tanks and intense 12-24-hour &ldquo;burst emissions&rdquo; during tanker offloads, as documented in the Clean Air Advisory Committee&rsquo;s report.</li>
+        <li>Maine&rsquo;s Ambient Air Guideline (AAG) for benzene, a strong carcinogen, is 0.4 parts per billion. Massachusetts sets its benzene guideline at 0.3 parts per billion. DEP monitoring near Bug Light has exceeded Maine&rsquo;s AAG for benzene many times.</li>
+        <li>According to DEP permits, the tanks in this area contain a wide variety of petroleum products, including gasoline, jet fuel and diesel. The tank farm next to the Shipyard is licensed for an annual throughput of 823,000 gallons of petroleum products, 330,000 gallons of which are gasoline, for a total of 49.9 tons of VOCs per year and 24.9 tons of HAPs per year. DEP estimates that 25% of Portland Pipeline&rsquo;s 220 tons of VOCs comes from the Bug Light area tanks.</li>
+        <li>Portland Pipeline&rsquo;s operations have slowed, but they could ramp up again.</li>
+        <li>People living around the tanks are exposed to cumulative toxic substances which are known to cause cancer, respiratory, immune, reproductive, liver, kidney and neurological damage. Fetuses and young children are especially susceptible.</li>
+        <li>Maine ranks among the nine states with the highest per-capita cancer rates and has an elevated childhood cancer rate. Reducing the local exposure should be a top priority.</li>
+        <li>Homes and other potential services such as schools and day cares should not be built near tank farms.</li>
+        <li>The operators&rsquo; state licenses have never required actual emissions testing. The Maine DEP has relied on a formula created by the American Petroleum Institute to let the operators self-report their own estimated emissions.</li>
+        <li>After actual testing began, the EPA sued 3 of the 6 oil companies (2012, 2013, 2020): Global, Sprague and Gulf. All were found to have significant violations of their permitted emissions. The oil companies have never been forced to remediate their processes to prevent future excessive emissions; they have just had to pay a fine.</li>
+        <li>The EPA has determined that the American Petroleum Institute formula used to measure emissions is widely inaccurate.</li>
+        <li>People living near the tank farms have complained of smells that force them to retreat inside and sometimes seal their windows to prevent the fear of known health effects.</li>
+        <li>During the Clear Skies Ordinance legal battle, expert testimony confirmed that no level of benzene is safe.</li>
+        <li>The tanks nearest the Yard South property contain the most volatile petroleum substance: gasoline. If there is a fire at these tanks or a massive leak or explosion, how could the city possibly evacuate potentially 2,000 people when there is only one road leading away from this property?</li>
+        <li>Fighting a fire on the 17th floor of one of these towers would demand fire equipment the department may not have, at great expense.</li>
+        <li>The public has not seen a specific evacuation plan for a catastrophic event.</li>
+      </ul>
+
+      <h2>Sea level rise and storm surges</h2>
+      <p>According to a Gulf of Maine Research Institute presentation to the Comprehensive Plan Committee, the rate of sea level rise has been increasing, and the predictions keep getting worse. PSP&rsquo;s position at the time: if flooding from sea level rise and storm surges damaged properties at Yard South, emergency help and restoration could fall on our taxes, especially where insurance was unaffordable or unavailable. The City needs all available funding to protect already established properties, not to add new development where it is endangered.</p>
+      <p>This property is located on a brownfield site. How much of the property will be remediated, and what toxins are buried in the soil, remain unknown. There are petroleum pipes under this property as well. What will a higher water level do to these potentially very old pipes?</p>
+      <p>The tanks are near the shoreline. PSP had not seen any plans for protecting a potential new community and Casco Bay from damage to the tanks, whether leakage, tanks moving off their bases, or collapse.</p>
+
+      <h2>Reports &amp; articles</h2>
+      <ul>
+        <li><a href="https://southportland2040.com/">South Portland&rsquo;s Comprehensive Plan</a></li>
+        <li><a href="https://www.oneclimatefuture.org/">One Climate Future Plan</a></li>
+        <li><a href="https://gmri.maps.arcgis.com/apps/MapSeries/index.html?appid=a51786cef60c4e388621d45a94052f36">Sea Level Rise in Maine | Projection Map Viewer</a> &mdash; Gulf of Maine Research Institute</li>
+        <li><a href="https://edition.pagesuite.com/popovers/dynamic_article_popover.aspx?artguid=62a613c8-b6fc-4283-917e-e759ecca81ea&amp;appcode=POR093&amp;eguid=41923bed-5b17-4beb-a3cf-516deac3cf68&amp;pnum=4">Storms and coastal flooding heighten concerns about stormwater pollution</a> &mdash; Penelope Overton</li>
+        <li><a href="https://www.pressherald.com/2023/01/03/early-plans-for-south-portland-shipyard-redevelopment-draw-opposition/">Early plans for South Portland shipyard redevelopment draw opposition</a> &mdash; PPH 1/3/23, Kelley Bouchard</li>
+        <li><a href="https://www.pressherald.com/2023/01/06/maine-voices-180-foot-tower-development-all-wrong-for-south-portland/">Maine Voices: Soaring tower development all wrong for South Portland</a> &mdash; PPH 1/6/23, Cathy Chapman</li>
+        <li><a href="https://themainemonitor.org/unstoppable-ocean-south-portland/">South Portland: a vital petroleum hub</a> &mdash; The Maine Monitor 10/9/22, Kate Cough</li>
+        <li><a href="https://www.cascobayestuary.org/wp-content/uploads/2018/02/2006-Dirty-History-Fact-Sheet-1994-reprint.pdf">The Dirty History of Portland Harbor</a> &mdash; Casco Bay Estuary, 1994 reprint</li>
+        <li><a href="https://insideclimatenews.org/news/20052023/sea-level-rise-underestimates/">Water, Water Everywhere</a> &mdash; Inside Climate News 5/20/23, Charlie Miller</li>
+        <li><a href="https://digital.sierramagazine.org/publication/?m=43145&amp;i=785135&amp;p=18&amp;ver=html5">Underwater: Could climate chaos sink the US real estate market?</a> &mdash; Sierra Magazine Spring 2023, Amanda Abrams</li>
+        <li><a href="https://www.pressherald.com/2023/05/02/bug-light-park-protection-sparks-controversy-in-south-portland/">Bug Light Park protection sparks controversy in South Portland</a> &mdash; PPH 5/2/23, Kelley Bouchard</li>
+        <li><a href="https://drive.google.com/drive/folders/1uQW3cmtjiGdvuOi-h1038Y9QBfzlQtA2">Yard South's Pre-Application Material</a> (preliminary site plan)</li>
+      </ul>
+      <p>Read the Yard South summary in the campaign archive: <a href="past-work.html">Past work</a>.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>

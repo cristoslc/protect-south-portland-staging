@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pesticides — Protect South Portland</title>
+<meta name="description" content="The Pesticide Use Ordinance in South Portland: how Bees, Bays and Backyards helped pass a groundbreaking ordinance.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">Pesticides</span>
+    <h1>Pesticide Use Ordinance in South Portland</h1>
+    <p class="lede">Protect South Portland mobilized the community support that passed this ordinance.</p>
+    <div class="prose">
+      <h2>How did this happen?</h2>
+      <p>&ldquo;Bees, Bays and Backyards&rdquo;, a committee of PSP, began exploring a possible pesticide ordinance in the spring of 2015. With the help of Beyond Pesticides, a national organization in Washington, and Friends of Casco Bay, a South Portland-area organization, we were able to bring to a City Council Workshop session a full-scale presentation of the issues involved in the use of synthetic pesticides. Experts in the dangers that these substances pose to the health of humans and wildlife were also able to outline solutions to these threats. The presentation paid special attention to pollinators, the bees and butterflies that make our planet fruitful. The Council unanimously got behind the proposal to explore an ordinance that would address this issue. Their first act was to appoint a three-person staff committee to carry out this task.</p>
+      <figure class="figure">
+        <img src="assets/photos/community-group.jpg" alt="Protect South Portland volunteers gathered at a community meeting" loading="lazy">
+        <figcaption>Protect South Portland volunteers and neighbors at a community meeting.</figcaption>
+      </figure>
+
+      <h2>People power at the root of what we do</h2>
+      <ul>
+        <li>promoted attendance at City Council meetings</li>
+        <li>publicized workshops for landscape professionals</li>
+        <li>wrote letters to the editors of local papers</li>
+        <li>collaborated with beekeepers and organic gardeners</li>
+        <li>joined with like-minded citizens of neighboring cities and towns</li>
+      </ul>
+      <figure class="figure">
+        <img src="assets/photos/child-planter.jpg" alt="A young child watering a garden planter" loading="lazy">
+        <figcaption>The youngest South Portlanders are among those the ordinance protects.</figcaption>
+      </figure>
+      <figure class="figure figure--half">
+        <img src="assets/photos/gardener.jpg" alt="A gardener tending an organic garden plot" loading="lazy">
+        <figcaption>An organic garden plot in South Portland.</figcaption>
+      </figure>
+
+      <h2>The final ordinance: an adventure in education</h2>
+      <p>Based on the principle &ldquo;first do no harm&rdquo;, South Portland&rsquo;s ordinance carries no penalties for non-conformance but relies on the good will and good sense of an informed citizenry. As a consequence, the ordinance is rooted in the belief that a rich and widely distributed educational program will be of far greater use in the long run.</p>
+      <p>For more information about the Ordinance and how to grow a healthy yard and garden, visit:</p>
+      <ul>
+        <li><a href="assets/files/pesticide-ordinance-ch32.pdf">Read the Ordinance (PDF)</a></li>
+        <li><a href="assets/files/pesticide-ordinance-faqs.pdf">Grow Healthy South Portland (PDF)</a></li>
+      </ul>
+      <figure class="figure">
+        <img src="assets/photos/bee-safe-yard.jpg" alt="A bee-safe yard lawn sign reading Another bee safe yard, no pesticides and no chemical fertilizers" loading="lazy">
+        <figcaption>The &ldquo;bee safe yard&rdquo; sign program recognizes pesticide-free yards.</figcaption>
+      </figure>
+
+      <h2>South Portland gets a grant for organic lawn care</h2>
+      <p>To help educate our residents on our pesticide ordinance and organic lawn care, South Portland has entered into a partnership with Stonyfield Organic to create a natural turf demonstration area at Bug Light Park.</p>
+      <p>South Portland has the honor of being the first city chosen to receive a $5,000 grant to be used towards purchasing organic inputs or landscaping equipment needed for organic management. On September 29, 2018, Stonyfield Organic held a &ldquo;field day&rdquo; at the park with educational booths, food and entertainment. Stonyfield also underwrote the cost of two experts from Osborne Organics and Beyond Pesticides to manage the project.</p>
+      <figure class="figure">
+        <img src="assets/photos/bug-light-sign.jpg" alt="Bug Light Park sign noting that the park grounds are organically maintained" loading="lazy">
+        <figcaption>Bug Light Park, home of the Stonyfield organic demonstration lawn.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="assets/photos/lawnmower.jpg" alt="A mower cutting an organic lawn" loading="lazy">
+        <figcaption>Organic turf is mowed high and fed by the soil.</figcaption>
+      </figure>
+
+      <h2>Goats clearing invasives at Yerxa Park</h2>
+      <p>To comply with South Portland&rsquo;s Pesticide Ordinance the City&rsquo;s Parks and Water Resource Departments partnered with the Pesticide Management Advisory Committee (PMAC) and brought in a herd of 8 goats to eat invasive Japanese knotweed and bittersweet that had taken over Yerxa Park, a one-acre underutilized park off the Greenbelt in South Portland.</p>
+      <p>Using the goats rather than the usual applications of pesticides to kill the invasives is in line with the city's sustainability objectives as well as being economical. The $600 cost to rent the goats for one week comes from the $15,000 Community Development Block Grant for the park.</p>
+      <figure class="figure figure--half">
+        <img src="assets/photos/goat.jpg" alt="A goat from the Scapegoats herd eating invasive knotweed" loading="lazy">
+        <figcaption>One of Scapegoats&rsquo; herd clearing invasives at Yerxa Park.</figcaption>
+      </figure>
+      <p>After the goats finished their clearing in September 2018, the city placed heavy landscaping cloth over the area for about 2 years to complete the destruction of the invasives. Plans called for a trail, native plantings, interpretive educational signs and additional benches to follow.</p>
+      <p>PMAC used the park as a demonstration project as part of its mandate under the Pesticide Ordinance to provide educational outreach to show citizens alternatives to a reliance on synthetic pesticides, which are banned under the Pesticide Ordinance except for health and safety reasons.</p>
+      <p>The goats are owned by Scapegoats, a business from Kennebunk. The charismatic, adorable goats developed a following, with many people coming several times a day to watch them perform their work.</p>
+
+      <h2>Related coverage</h2>
+      <ul class="contact-list">
+        <li><a href="https://www.pressherald.com/2016/09/07/south-portland-passes-cosmetic-pesticide-ban/">South Portland passes pesticide ban that puts education over enforcement</a> &mdash; Kelley Bouchard, Sept. 7, 2016</li>
+        <li><a href="https://www.pressherald.com/2018/06/17/pesticide-bans-in-south-portland-and-portland-are-bringing-attention-to-ways-to-manage-lawn-and-garden-pests-without-chemicals/">Pesticide bans raise question: Can we manage garden pests without chemicals?</a> &mdash; Ray Routhier, June 17, 2018</li>
+        <li><a href="https://www.pressherald.com/2016/06/21/maine-voices-as-debate-over-pesticides-ramps-up-lets-dispel-a-number-of-myths/">As debate over pesticides ramps up, let's dispel a number of myths</a> &mdash; Jay Feldman &amp; Heather Spalding, June 21, 2016</li>
+        <li><a href="https://www.pressherald.com/2018/08/20/letter-to-the-editor-splendor-in-the-longer-grass-no-need-to-mow-it-so-short/">Splendor in the longer grass; no need to mow it so short</a> &mdash; Rachel Burger, Aug. 20, 2018</li>
+        <li><a href="https://www.pressherald.com/2017/05/29/letter-to-the-editor-smart-environmentalism-is-like-letting-grass-grow/">Smart environmentalism means letting grass grow</a> &mdash; Rachel Burger, May 29, 2017</li>
+        <li><a href="https://www.centralmaine.com/2018/04/12/south-portland-council-rejects-oil-companies-request-for-pesticide-waiver/">South Portland council rejects oil companies' request for waiver from pesticide ordinance</a> &mdash; Juliette Laaka, Apr. 12, 2018</li>
+        <li><a href="https://www.pressherald.com/2018/09/05/south-portland-gets-goats-to-clear-park-of-invasive-weed/">South Portland gets a herd of hungry goats to clear park of invasive weed</a> &mdash; Kelley Bouchard, Sept. 5, 2018</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clear Skies ordinance — Protect South Portland</title>
+<meta name="description" content="The Clear Skies Ordinance bans the loading of crude oil onto tankers in South Portland's harbor — the history of how a community took on Big Oil.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">Clear Skies</span>
+    <h1>Clear Skies ordinance</h1>
+    <div class="prose">
+      <h2>History</h2>
+      <p>When Portland Pipeline, a subsidiary of ExxonMobil and Suncor, tried to build a tar sands export terminal next to Bug Light Park on the shores of Casco Bay in South Portland, Maine, the community banded together to launch a successful community effort to block the oil industry. The oil company wanted to reverse the flow of an aging pipeline to transport tar sands oil, a thick, heavy sludge from the ravaged Alberta boreal forest in Canada, where the oil industry has destroyed an area the size of Greece. It would have then traveled through Canada, Vermont, New Hampshire, and Maine to be exported in tankers from South Portland. This 75-year-old pipeline currently passes through many water sources, including the watershed that feeds Sebago Lake, which provides drinking water to 20% of Maine&rsquo;s population. Their plan was to build two 70-foot smokestacks on the shore of Casco Bay. These stacks would emit toxic carcinogenic fumes into our neighborhoods, threatening our health and imperiling our crucial marine and tourism industries.</p>
+      <p>A groundswell of community support resulted in the passage of South Portland&rsquo;s Clear Skies Ordinance in 2014. It stopped corporate oil in its tracks. It was a battle to confirm our community&rsquo;s right to self-determination, and to protect our planet from the dirtiest oil on earth.</p>
+      <p>Protect South Portland&rsquo;s purpose is to ensure that permits are never issued for a tar sands oil project, and that a land use ordinance is put in place to prevent tar sands oil from ever being brought to our city. By working together, we can keep our community healthy, clean, and thriving!</p>
+      <figure class="figure">
+        <img src="assets/photos/stop-tar-sands-rally.jpg" alt="Protesters on the steps of South Portland City Hall holding Stop Tar Sands signs" loading="lazy">
+        <figcaption>Citizens on the steps of City Hall at a Stop Tar Sands rally. Photo: Protect South Portland archives.</figcaption>
+      </figure>
+
+      <h2>The ordinance in plain terms</h2>
+      <figure class="figure">
+        <img src="assets/photos/tanker-jetty.jpg" alt="A tanker moored at the marine oil terminal jetty in South Portland harbor" loading="lazy">
+        <figcaption>A tanker at the marine terminal jetty in South Portland harbor. Photo: Protect South Portland archives.</figcaption>
+      </figure>
+      <p>The Clear Skies Ordinance bans the loading of crude oil onto tankers in South Portland's harbor. The process of loading crude oil, especially crude derived from tar sands, is accompanied by the emission of toxic chemicals. The ordinance is based on the city&rsquo;s home rule authority and its right to regulate air quality for the health and welfare of its citizens. Hence, its name.</p>
+
+      <h2>How the ordinance came into being</h2>
+      <p>In early 2013, South Portland residents began gathering in living rooms. Portland Pipeline, they learned, was planning to change from an importing to an exporting pipeline by reversing the flow of its line to bring tar sands oil to load onto tankers in our harbor. From those gatherings a grassroots movement developed and spread throughout the community.</p>
+      <p>South Portland residents volunteered to do door to door canvassing, letter writing, phone calling, lobbying city councilors, writing articles for local papers, and showing up at demonstrations, as well as at every city council meeting or workshop, for well over a year. With a David and Goliath fight on our hands, we put all our trust in the power of people working together to protect the city.</p>
+      <p>Initially, we lost at the polls by 193 votes in November 2013, when the Waterfront Protection Ordinance went down. But that defeat only reinforced our dedication to keep our grassroots effort going. The resulting reward for the determination of our citizens was the passage of the Clear Skies Ordinance by the South Portland City Council with a vote of 6-1 on July 21, 2014.</p>
+      <figure class="figure">
+        <img src="assets/photos/pipeline-march.jpg" alt="Marchers walking with signs against the Portland-Montreal pipeline reversal" loading="lazy">
+        <figcaption>The community turns out to stop the pipeline reversal. Photo: Protect South Portland archives.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="assets/photos/water-rally.jpg" alt="Rally on the water and the Casco Bay Bridge for clean water in South Portland" loading="lazy">
+        <figcaption>Rallying for Casco Bay water in South Portland.</figcaption>
+      </figure>
+      <p>Twenty days later, when it officially became law, South Portland effectively shut down the possibility of bringing tar sands from Alberta, Canada to Casco Bay in Maine via the Portland Montreal Pipeline. This was a hard-fought victory, lasting many months. What started with a small group of people grew into a determined, citywide effort, and it was the result of citizen power rising up against the power of Big Oil.</p>
+      <figure class="figure">
+        <img src="assets/photos/podium.jpg" alt="A speaker addressing a Protect South Portland gathering at a podium" loading="lazy">
+        <figcaption>Speaking out at a South Portland community gathering.</figcaption>
+      </figure>
+
+      <h2>South Portland takes on Big Oil</h2>
+      <p>Portland Pipeline sued the City of South Portland in Federal Court on nine points. One of these cited the Interstate Commerce Clause of the Constitution, and alleged that the city had overstepped its authority to legislate for a company engaged in business across state borders. After a long and tortuous process of discovery, the judge ruled for the city on eight of the nine points but reserved the constitutional question for further proceedings. Two bench trials were held over a period of about ten months, the last of which occurred in June 2018 and lasted four days.</p>
+      <p>Finally, in late August 2018, the judge ruled in favor of South Portland, declaring that the Clear Skies Ordinance did not violate the Commerce Clause. This is a victory for local authority in matters of the health and welfare of its citizens and has been of great interest to other U.S. communities fighting pipelines and transmission lines that would affect the quality of their environment.</p>
+      <p><strong>SUCCESS:</strong> Portland Pipeline appealed Judge Woodcock&rsquo;s decision to the First Circuit Court of Appeals in Boston. Both parties filed their opinions with the court. After a battle of 8 years, the Portland Pipeline withdrew its last appeal to nullify the Clear Skies Ordinance. The long road that led us to this success has been paved with the thousands of people who have contributed in so many ways. South Portland residents spent numerous hours canvassing, making phone calls, writing letters to the editor, attending rallies and city council meetings and donating what money they could. Our city is committed to keeping our neighborhoods safe and our air clean.</p>
+      <p><a href="assets/files/clear-skies-ordinance-2014.pdf">Read the ordinance (PDF)</a></p>
+
+      <h2>More info</h2>
+      <ul class="contact-list">
+        <li><a href="https://www.pressherald.com/2020/09/17/south-portland-pipeline-company-square-off-before-high-court/">South Portland, pipeline company square off before high court</a> &mdash; Sean Murphy, Sept. 17, 2020</li>
+        <li><a href="https://www.pressherald.com/2020/01/15/federal-appeals-court-sends-south-portland-pipeline-case-to-maines-top-judges/">Federal appeals court asks Maine's top judges to rule on South Portland pipeline case</a> &mdash; Kelley Bouchard, Jan. 15, 2020</li>
+        <li>Related articles: <a href="https://www.pressherald.com/2018/08/24/federal-court-rules-south-portland-ordinance-does-not-violate-u-s-constitution/">South Portland&rsquo;s &lsquo;Clear Skies&rsquo; ordinance survives challenge</a> &mdash; Aug. 24, 2018</li>
+        <li><a href="https://insideclimatenews.org/news/28082018/tar-sands-pipeline-court-ruling-south-portland-ban-public-health-constitutional-big-oil-maine">South Portland's Tar Sands Ban Upheld in a 'David vs. Goliath' Pipeline Battle</a> &mdash; Sabrina Shankman, Aug. 28, 2018</li>
+        <li><a href="https://insideclimatenews.org/news/02112017/oil-pipeline-tar-sands-banned-south-portland-maine-industry-lawsuit-home-rule">This Coastal Town Banned Tar Sands and Sparked a War with the Oil Industry</a> &mdash; Sabrina Shankman, Nov. 2, 2017</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>
