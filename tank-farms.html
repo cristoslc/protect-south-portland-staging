@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>South Portland Tank Farms — Protect South Portland</title>
+<meta name="description" content="South Portland Tank Farms: where things stand (October 2026 fence-line data), the 120 tanks and the interactive map, health effects of VOCs, and the campaign's history of pushing for emissions rules.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">The campaign</span>
+    <h1>South Portland Tank Farms</h1>
+    <div class="callout">
+      <h2 class="h3-look" style="margin-top:0" id="where-things-stand">Where things stand &mdash; October 2026</h2>
+      <p>State <strong>fence-line monitoring data has now been collected at the tank farms</strong>. Concerning readings came in near every facility. At <strong>Citgo on Mechanic Street</strong> in Pleasantdale, the air <strong>consistently and dramatically exceeded the state standard for benzene</strong>, a well-studied carcinogen. At <strong>South Portland Terminal on Lincoln Street</strong>, one reading registered <strong>12 times the state&rsquo;s ambient air quality standard</strong>.</p>
+      <p>The raw monitoring summaries are already public on the City&rsquo;s <a href="https://www.southportland.gov/522/Air-Quality-Concerns-Monitoring">Air Quality page</a>: the <a href="https://www.southportland.gov/DocumentCenter/View/4819/September-8-2026-South-Portland-24-Hour-Volatile-Organic-Compounds-Air-Monitoring-Results-Analysis-and-Summary-Report-PDF">September 2026 24-hour VOC monitoring results (PDF)</a> and the <a href="https://www.southportland.gov/DocumentCenter/View/5116/October-6-2026-Petroleum-Storage-Facility-Fenceline-Air-Monitoring-Three-Year-Data-Summary-PDF">October 6, 2026 fence-line three-year data summary (PDF)</a>. DEP and CDC analysis of the fence-line data is expected imminently. When the state publishes its analysis, PSP will post it here along with our response.</p>
+      <p style="margin-bottom:0"><strong>Make plans to come to the City Council workshop on Tuesday, Oct. 27 at 6 p.m., South Portland High School (637 Highland Ave.)</strong> &mdash; and <a href="act-now.html">email the Council before the workshop</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="prose">
+      <h2>120 large petroleum tanks, run by six major oil companies</h2>
+      <p>There are <strong>120 large petroleum tanks in South Portland</strong>, run by six major oil companies. Residents have raised concerns for decades that the tanks compromise air quality for the people who live, work and play very close to them. New state data measuring air quality along the fence lines of these tank farms has confirmed what we&rsquo;ve felt, and smelled, for years: <strong>They are bad neighbors, profiting off harm to our community.</strong></p>
+      <p>Concerning readings were collected near all the tanks, but two tank farms stand out. At Citgo on Mechanic Street, which sits very close to homes in Pleasantdale, monitors found the air <strong>consistently and dramatically exceeded state standards for benzene, a well-studied carcinogen.</strong> Benzene measurements were highest at South Portland Terminal on Lincoln Street, bordered by businesses, homes and Forest City Cemetery, with one reading registering <strong>12 times higher</strong> than the state&rsquo;s ambient air quality standard, meant to protect people from cancer risk.</p>
+      <figure class="figure">
+        <img src="assets/photos/tank-farms-aerial.jpg" alt="Aerial view of the oil storage tank farms along South Portland's waterfront" loading="lazy">
+        <figcaption>The tank farms along South Portland&rsquo;s working waterfront. Photo: Protect South Portland archives.</figcaption>
+      </figure>
+
+      <div class="map-frame">
+        <iframe src="map/embed.html" title="Interactive map of South Portland tank farms, nearby schools, child care and senior housing, the one-mile fence-line buffer, and DEP air monitors" loading="lazy"></iframe>
+      </div>
+      <p class="map-note">Use the slider inside the map to change the search radius around the fence lines. Facilities, schools and child care, the buffer and DEP air monitors are labeled.</p>
+
+      <h2>Background: EPA and Global Partners in court (2019)</h2>
+      <p>The oil storage tanks of Global Partners and other companies located in South Portland are currently emitting well over what they are permitted to emit according to the EPA. The citizens and city officials of South Portland were alerted to this violation in March 2019, when the EPA filed a complaint in Federal District Court against Global Partners LP for exceeding their emissions license for well over what they are allowed. Apparently the EPA had never notified South Portland of repeated violations over a period of at least 7 years.</p>
+      <p>The citizens in the neighborhood of Pleasantdale, where Global&rsquo;s storage tanks are located, have been complaining for years of seeing plumes, experiencing noxious odors and suffering from headaches and other symptoms. Their complaints have virtually been ignored. There are several schools, daycare facilities, and housing for the elderly in this area. Our most vulnerable citizens, our children and our elderly, are being exposed to noxious fumes and the Volatile Organic Compounds (VOC&rsquo;s) present in these fumes.</p>
+      <figure class="figure">
+        <img src="assets/photos/whos-breathing-map.png" alt="Map of the tank farms, schools, child care centers and sensitive receptors breathing the air near South Portland's tank farms" loading="lazy">
+        <figcaption>Who&rsquo;s breathing the air near South Portland&rsquo;s tank farms: the schools, child care centers and family child care homes within the fence-line area.</figcaption>
+      </figure>
+      <p>The issue has been further complicated by the fact that the Federal EPA and the Maine Department of Environmental Protection (MDEP) have not been able to agree on the same technique for measuring emissions. Although the MDEP has been monitoring the tank farms, they claim they have not found violations and have not taken adequate measures to address the emissions.</p>
+      <figure class="figure">
+        <img src="assets/photos/voc-health-risks.png" alt="Infographic of the health risks from VOCs: benzene, ethylbenzene, toluene and xylene and the organ systems they harm" loading="lazy">
+        <figcaption>Some of the health risks from VOCs, based on ATSDR toxicological profiles.</figcaption>
+      </figure>
+
+      <h2>Selected reading</h2>
+      <ul class="contact-list">
+        <li><a href="https://www.bostonglobe.com/2021/06/16/magazine/is-there-something-wrong-with-air-south-portland-maine/">Is there something wrong in the air in South Portland?</a> &mdash; Kathryn Miles, Boston Globe Magazine, June 2021</li>
+        <li><a href="https://insideclimatenews.org/news/18032024/fossil-fuels-toxic-chemicals-deadly-diseases/">Petrochemicals Are Killing Us, a New Report Warns in the New England Journal of Medicine</a> &mdash; Liza Gross, Inside Climate News, March 2024</li>
+      </ul>
+
+      <h2>EPA action</h2>
+      <p>The EPA filed a consent decree to address the violations by Global, which called for Global to pay the U.S. Justice Department $40,000 in penalties and allot $150,000 to replace/retrofit their wood-burning appliances in the area (of which there are not many in the area). When the citizens of South Portland discovered the terms of the consent decree, there was an outpouring of anger and indignation at the fact that Global did not have to admit wrongdoing or address the harm being done now and over many years. <a href="https://www.justice.gov/enrd/consent-decree/file/1147476/download">Read the consent decree</a>.</p>
+      <figure class="figure">
+        <img src="assets/photos/global-fore-river.jpg" alt="The Global Partners petroleum storage facility on the Fore River in South Portland" loading="lazy">
+        <figcaption>The Global Partners LP storage facility on the Fore River. Photo: Derek Davis/Portland Press Herald.</figcaption>
+      </figure>
+      <p>Sprague Oil Company also received a notice of violation from the EPA on May 29, 2020 for several years of violations. The Dept. of Justice filed a consent decree with Sprague for violations at their facilities in both South Portland and Searsport, Maine, as well as in Massachusetts, New Hampshire and Rhode Island. <a href="assets/files/sprague-doj-complaint.pdf">Read the complaint (PDF)</a></p>
+
+      <h2>Protect South Portland&rsquo;s role</h2>
+      <p>Protect South Portland has been actively working to inform the public and explore our legal rights to demand cleaner air. There have been neighborhood meetings to hear complaints and to receive citizen input on how to move forward. Members attend City Council meetings and workshops to demand immediate action to minimize these emissions.</p>
+      <figure class="figure">
+        <img src="assets/photos/global-tank-shore.jpg" alt="A Global Partners oil storage tank at the edge of Casco Bay" loading="lazy">
+        <figcaption>A Global Partners tank at the edge of Casco Bay.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="assets/photos/pleasantdale-odors.jpg" alt="Kate Adamy and her daughter Ava Gleason on Elm Street in the Pleasantdale neighborhood, near the tank farms" loading="lazy">
+        <figcaption>Kate Adamy and her daughter Ava Gleason on Elm Street in Pleasantdale, where petroleum odors are a problem. Photo: Ben McCanna/Portland Press Herald.</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="assets/photos/elm-street-students.jpg" alt="Students walking home down Elm Street in the Pleasantdale neighborhood of South Portland" loading="lazy">
+        <figcaption>Students walk home down Elm Street in Pleasantdale. Photo: Brianna Soukup/Portland Press Herald.</figcaption>
+      </figure>
+      <p>After much research on best practices for abating emissions, Protect South Portland in conjunction with other environmental groups filed our official comments on the consent decree to appeal the existing decree and seek a more appropriate settlement. The Justice Department rejected our appeal. PSP is advocating in the process as the Clean Air Advisory Committee and the city are reviewing Global's permit application with the DEP.</p>
+      <p>PSP is advocating for continuous emissions monitoring and control to be included in the permit.</p>
+
+      <h2>Clean Air Advisory Committee</h2>
+      <p>The South Portland City Council formed a Clean Air Advisory Committee (CAAC), charged with creating a strategy to improve the air quality in South Portland and the surrounding area. All meetings were posted and open to the public. CAAC&rsquo;s final report was released in February 2023. <a href="https://www.southportland.gov/522/Air-Quality-Concerns-Monitoring">Read more about CAAC</a>.</p>
+
+      <h2>DEP air quality findings</h2>
+      <p>After pressure from the people of South Portland, the Maine DEP agreed to conduct limited air quality testing using air collection canisters distributed to individuals in some parts of the city. <a href="https://www.maine.gov/dep/air/monitoring/spo-voc-monitor.html">View results on the DEP&rsquo;s website</a>.</p>
+
+      <h2>Resolve LD 1915</h2>
+      <p>In 2020 the legislature, according to Resolve LD 1915, directed the Maine Department of Environmental Protection to study the best methods to measure and control emissions on all tanks in Maine, including reviewing what other states and regulatory bodies require of tank operators. The department did not fulfill the mandate of the resolve. Instead they dismissed the need for more comprehensive monitoring and testing. The Maine DEP has focused more on odor than on the risk to public health and has recommended little more than the status quo.</p>
+      <p>Currently, no actual testing of emissions is required for operators to obtain licenses. In the report, the DEP depends solely on formulas developed by the American Petroleum Institute. These formulas have been deemed acceptable in the report despite that US EPA found that the oil companies using this method were grossly underestimating their emissions with no accountability.</p>
+      <p>PSP finds it unacceptable that no rule requires tank owners to monitor or control these toxic emissions. The tanks sit inside our neighborhoods and are making residents sick; that is a social justice issue. PSP put together a coalition of 12 health advocacy and environmental organizations to work together to advocate with the ENR to pass a stronger bill.</p>
+      <p>Read PSP&rsquo;s response to the DEP report. The full Maine DEP report is below. If you do not want to read the entire 111-page report, we recommend that you start at page 94 and read the section: Conclusions and Recommendations.</p>
+
+      <h2>Reference documents</h2>
+      <ul>
+        <li><a href="assets/files/maine-dep-report-ld1915.pdf">Maine DEP report PDF, 111 pages (per LD 1915, Jan. 2021)</a></li>
+        <li><a href="assets/files/psp-submission-enr.pdf">PSP's submission to the ENR Committee PDF, 3 pages</a></li>
+        <li><a href="assets/files/falatko-comments.pdf">David Falatko's comments PDF</a></li>
+        <li><a href="assets/files/mikulka-comments.pdf">Tom Mikulka's comments PDF</a></li>
+      </ul>
+
+      <h2>2021&ndash;2022: LD 163</h2>
+      <p>After diligent advocating for many months by Senator Anne Carney, PSP, and the Tank Coalition of Maine before the BEP, the ENR, and the State Legislature, LD 163 was signed into law by Governor Mills on June 22, 2021.</p>
+      <p>Senator Anne Carney&rsquo;s bill LD 163 with amendments includes fence line monitoring around the perimeter of the above-ground oil tanks and testing twice a year on heated tanks while they are in service. This is a big step forward for South Portland, Portland, and the entire state. These tanks have never been monitored for actual emissions of toxic chemicals.</p>
+      <figure class="figure">
+        <img src="assets/photos/statehouse.jpg" alt="The Maine State House in Augusta" loading="lazy">
+        <figcaption>The Maine State House in Augusta, where LD 163 and LD 71 passed.</figcaption>
+      </figure>
+      <p>Instead, a formula established by the American Petroleum Institute has been used to calculate emissions from what gets put into the tanks. This formula, AP-42, has been acknowledged to be widely unreliable.</p>
+      <p>In South Portland alone, six tank farm facilities combined are permitted to emit almost 600 tons of volatile organic compounds (which turn into ozone) and 104 tons of hazardous air pollutants per year into the air in densely populated neighborhoods with homes, schools, and daycares nearby. The chemicals in the emissions are known to cause cancer, respiratory illnesses (asthma), and neurological problems for fetuses and developing children.</p>
+      <p>We thank Senator Carney and Representatives Morales and Millett for their tireless work in helping PSP and the Tank Emissions Coalition to successfully pass this bill. Of most importance, PSP hoped that LD 163 with amendment and rulemaking would:</p>
+      <ol>
+        <li>Require oil tank storage facilities to do actual testing of tank emissions twice a year on heated tanks.</li>
+        <li>Require fence-line monitoring on the perimeter of tank farm facilities to measure the hazardous air pollutant emissions that are going beyond the facility into the surrounding community.</li>
+      </ol>
+      <p><a href="https://www.mainelegislature.org/legis/bills/getPDF.asp?paper=HP0119&amp;item=7&amp;snum=130">Read LD 163 (PDF)</a></p>
+
+      <h2>Rulemaking</h2>
+      <p>Once a bill is passed into law, Rulemaking determines the wording and substance of the rules to enforce that law. It is crucial that strict and comprehensive rules and regulations be carefully worded in order to get the most comprehensive data from the mandated testing and monitoring. Timing and careful procedures are also important to protecting our community&rsquo;s health.</p>
+      <p>The rules, Chapters 170 and 171, for LD 163 were drafted and reviewed by the Board of Environmental Protection (BEP). There was a hearing before the BEP on February 3, 2022. When the rules pass the BEP, they go to the Environment and Natural Resources Committee (ENR) for approval. The rules then need to be approved by the House and Senate. Our goal is to ensure the installation of the strictest rules possible for the state of Maine&rsquo;s oil storage tanks.</p>
+      <p>The more data we have in quarterly reporting the more we are able to protect our community. Timing and best-practice procedures matter too. These are additions we requested to be included in the rules:</p>
+      <ul>
+        <li>Petroleum distillates and residual oils should be added to the list of potential pollutants to be controlled when removing organic vapors for degassing.</li>
+        <li>In addition to benzene, three other toxic hazardous air pollutants (HAPs) should be monitored for a nominal additional cost. It is important that we know the amounts of toluene, ethylbenzene, and xylenes along with benzene which form the components of BTEX, all of which may be considered carcinogens.</li>
+        <li>To determine the source of emissions, the wind direction as well as temperature and atmospheric pressures should be documented at the time of the testing.</li>
+        <li>The proposed time frames for implementing fence line testing are excessive and should be shortened: from 18 months to 9 months.</li>
+        <li>We need transparency. All data and analysis must be reported quarterly to the DEP, the affected municipalities, and the public.</li>
+      </ul>
+
+      <h2>Great news: LD 71, the rulemaking on LD 163, passed in May 2023</h2>
+      <p>LD 71 passed as an emergency measure. It passed 114 to 1 in the Maine House of Representatives and it passed in the Maine Senate 26 to 6! Both votes got over the 2/3 required for an emergency measure that requires more immediate implementation.</p>
+      <p>Fence-line monitoring around all tank farms in Maine and twice-a-year testing of all heated tanks began implementation in 2024, and the requirements are paid for by the oil companies. That monitoring produced the fence-line data described at the top of this page.</p>
+      <p>We are very appreciative of all the work and commitment the City Council, city staff and the CAAC have brought to the issue of the tank emissions and very grateful for the overwhelming support of State Legislators. This has been a challenging and important issue calling for concerted and continuous efforts.</p>
+      <p>South Portland and the State of Maine have moved the needle on holding the oil industry accountable to the communities living beside its tank farms.</p>
+      <p><a href="https://legiscan.com/ME/bill/LD71/2023">LD 71 (2023)</a></p>
+
+      <h2>PSP will keep working for more information</h2>
+      <p>We still don&rsquo;t have DEP monitors closer to the tank farms, a request made throughout the CAAC&rsquo;s existence. The CAAC also had been asking for direct vent testing during delivery. We also continue to need information about the schedule of petroleum deliveries, which is connected to the bursts when the tanks are being filled from the ships. The bursts are recurrent intermittent high level emissions that last 12&ndash;24 hours. We know that in 2017 there were 200 of these deliveries. The focus of monitoring these past years has been on average annual emissions in areas that are not close to the tanks. This does not answer the central question: what is the exposure to high levels of toxic emissions in the bursts for the thousands of South Portland residents who live in the neighborhoods surrounding the tank farms? We still need to know.</p>
+
+      <h2>Media coverage</h2>
+      <ul class="contact-list">
+        <li><a href="https://www.pressherald.com/2020/07/04/south-portland-wants-tougher-epa-crackdown-on-sprague-tank-pollution/">South Portland wants tougher EPA crackdown on Sprague tank pollution</a> &mdash; Kelley Bouchard, July 4, 2020</li>
+        <li><a href="https://www.pressherald.com/2020/03/05/rep-carney-maine-communities-shouldnt-have-to-foot-the-bill-for-oil-facility-closures/">OpEd: Maine communities shouldn't have to foot the bill for oil facility closures</a> &mdash; Rep. Anne Carney, Mar. 5, 2020</li>
+        <li><a href="https://www.pressherald.com/2020/01/24/maine-dep-may-seek-better-ways-to-measure-control-oil-tank-emissions/">Maine DEP may seek better ways to measure, control oil tank emissions</a> &mdash; Kelley Bouchard, Dec. 7, 2019</li>
+        <li><a href="https://www.pressherald.com/2019/11/08/maine-voices-dep-failing-to-protect-south-portland-residents-from-polluted-air/">Maine Voices: DEP failing to protect South Portland residents from air pollution</a> &mdash; David Falatko, Nov. 8, 2019</li>
+        <li><a href="https://www.pressherald.com/2020/03/29/governor-signs-bill-requiring-owners-to-clean-up-closed-oil-storage-tank-sites/">Gov. signs bill requiring owners to clean up closed oil storage tank sites</a> &mdash; Dennis Hoey, Mar. 29, 2020</li>
+        <li><a href="https://www.pressherald.com/2020/02/12/2-petroleum-terminal-bills-win-strong-legislative-committee-backing/">Two petroleum terminal bills win strong backing from legislative panel</a> &mdash; Kelley Bouchard, Feb. 12, 2020</li>
+        <li><a href="https://insideclimatenews.org/project/fumes-in-south-portland/">Fumes in South Portland &mdash; Sabrina Shankman, Inside Climate News series, 2019&ndash;2020</a></li>
+        <li><a href="https://insideclimatenews.org/news/01062020/south-portland-maine-storage-tank-emissions-calculation/">Fuzzy Math: How Do You Calculate Emissions From a Storage Tank When The Numbers Don&rsquo;t Add Up?</a> &mdash; Sabrina Shankman, June 1, 2020</li>
+        <li><a href="https://insideclimatenews.org/news/17022020/parents-become-activists-south-portland-petroleum-tanks/">Parents Become Activists in the Fight over South Portland&rsquo;s Petroleum Tanks</a> &mdash; Sabrina Shankman, Feb. 17, 2020</li>
+        <li><a href="https://insideclimatenews.org/news/07122019/south-portland-oil-tank-farm-air-pollution-health-hazard-asthma-testing/">They Built a Life in the Shadow of Industrial Tank Farms. Now, They&rsquo;re Fighting for Answers</a> &mdash; Sabrina Shankman, Dec. 7, 2019</li>
+        <li><a href="https://insideclimatenews.org/news/26112019/sea-level-rise-oil-tank-flood-risk-gulf-maine-south-portland-emergency-plan">With Giant Oil Tanks on Its Waterfront, This City Wants to Know: What Happens When Sea Level Rises?</a> &mdash; Sabrina Shankman, Nov. 27, 2019</li>
+        <li><a href="https://insideclimatenews.org/news/29102019/oil-tank-farms-air-quality-south-portland-health-risk-test-results-maine/">'This Is Not Normal.' New Air Monitoring Reveals Hazards in This Maine City.</a> &mdash; Sabrina Shankman, Oct. 29, 2019</li>
+        <li><a href="https://insideclimatenews.org/news/23082019/south-portland-oil-tank-pollution-testing-results-voc-benzene-source">Air Monitoring Reveals Troubling Benzene Spikes Officials Don&rsquo;t Fully Understand</a> &mdash; Sabrina Shankman, Nov. 27, 2019</li>
+        <li><a href="https://insideclimatenews.org/news/30072019/south-portland-oil-tank-fumes-health-fears-vocs-community-activism-maine">Activists Gird for a Bigger Battle Over Oil and Fumes from a Port City's Tank Farms</a> &mdash; Sabrina Shankman, Jul. 28, 2019</li>
+        <li><a href="https://www.pressherald.com/2019/07/28/maine-dep-admits-it-was-wrong-to-resist-federal-crackdown-on-oil-tank-pollution-but-doubts-remain-about-testing/">State admits it was wrong to resist federal crackdown on oil tank pollution</a> &mdash; Kelley Bouchard, Jul. 28, 2019</li>
+        <li><a href="https://web.archive.org/web/20230609051134/https://portlandphoenix.me/is-our-air-safe-to-breathe/">'Is our air safe to breathe?'</a> &mdash; Robert Lewis-Nash, Portland Phoenix, Dec. 2020</li>
+        <li><a href="https://mainebeacon.com/sopo-residents-seek-tighter-regulations-accountability-for-oil-tank-emissions/">SoPo residents seek tighter regulations, accountability for oil tank emissions</a> &mdash; Emily Weyrauch, Maine Beacon, Jan. 2021</li>
+        <li><a href="https://www.wmtw.com/article/maine-department-of-environmental-protection-issues-report-on-south-portland-oil-storage-tanks/35133585">ME DEP issues report on South Portland oil storage tanks</a> &mdash; WMTW, Jan. 5, 2021</li>
+        <li><a href="https://www.wmtw.com/article/south-portland-residents-press-maine-environmental-regulators-on-oil-storage-tank-emissions-testing-remediation/35206267">SoPo residents press ME environmental regulators on oil storage tank emissions testing remediation</a> &mdash; WMTW, Jan. 13, 2021</li>
+        <li><a href="https://www.pressherald.com/2019/03/25/epa-south-portland-oil-storage-facility-violated-clean-air-act-agrees-to-settlement/">EPA: South Portland oil storage facility violated Clean Air Act, agrees to settlement</a> &mdash; Kelley Bouchard, Mar. 25, 2019</li>
+        <li><a href="https://web.archive.org/web/20230925034611/https://portlandphoenix.me/battle-over-south-portland-tank-emissions-moves-to-augusta/">Battle over South Portland tank emissions moves to Augusta</a> &mdash; Portland Phoenix</li>
+      </ul>
+      <p class="callout">The rally video from Apr. 23, 2021: <a href="https://youtu.be/N-hm8dt29FE">watch on YouTube</a>.</p>
+
+      <div class="callout">
+        <h3 style="margin-top:0">Now is the time to act:</h3>
+        <ul>
+          <li><strong>Make plans to come to the City Council workshop on Tuesday, Oct. 27</strong> at 6 p.m., South Portland High School (637 Highland Ave.).</li>
+          <li><strong>Email the City Council before the workshop</strong> and ask them to pressure the DEP to use the existing licensing process to stop tank farms from dumping pollutants into our neighborhoods. City Council email addresses are found here: <a href="https://southportland.gov/411/City-Council">southportland.gov/411/City-Council</a>.</li>
+          <li><strong>Email</strong> <a href="mailto:protectsouthportland@gmail.com">protectsouthportland@gmail.com</a> to get plugged into local tank farm efforts.</li>
+        </ul>
+        <p style="margin-bottom:0"><a class="btn btn--cta" href="act-now.html">Act now</a> &nbsp; <a class="btn btn--ghost" href="https://southportland.gov/411/City-Council">City Council emails</a></p>
+      </div>
+
+      <h2 id="health-effects-of-vocs">Health effects of VOCs</h2>
+      <p>Volatile Organic Compounds (VOCs) are made up of elements including Hazardous Air Pollutants (HAPs). Global was cited by the EPA for releasing twice their permitted VOCs for at least seven years. HAPs vary in their disease effects.</p>
+      <p>They hit the very young the hardest because they are growing rapidly and their resting metabolic rate is higher. They consume more oxygen per body weight than adults. This significantly increases their exposure to HAPs. Their airways are narrower and their mucous glands are larger. Irritations that might cause only a slight response in an adult could result in dangerous obstruction for a child. This obstruction can put them at risk for allergies and life threatening asthma.</p>
+      <p>For all of us, long-term exposure can harm the heart and circulatory system, the liver (our major organ of detoxification) and, most critically, the immune system. The genetics we inherit from our parents and past generations isn&rsquo;t necessarily what condemns us to the cancers, autoimmune diseases and other illnesses that we struggle with. Researchers now describe inherited DNA as a blueprint. It is the environmental challenges that potentially change the DNA that pulls the trigger for these diseases.</p>
+      <p>We know that increasing amounts of these VOCs in the air we breathe are a risk factor, especially for children, the elderly, pregnant women and people living near the source of these pollutants. We have heard testimony from people living in the vicinity of the Global tank farm that they have endured frequent severe headaches, and discomfort of breathing in the toxic smells emitted especially in the evenings.</p>
+
+      <h3>Cancer risk</h3>
+      <p><strong>Cancer Risk For Portland and South Portland Residents From Tank Farm Emissions Using the EPA HEM-3 Model</strong></p>
+      <p>Legend &mdash; Increased Cancer Risk Per Million People:</p>
+      <ul>
+        <li>Green squares: low-3, high-19</li>
+        <li>Yellow squares: low-20, high-89</li>
+        <li>Red squares: low-101, high-165</li>
+      </ul>
+      <figure class="figure">
+        <img src="assets/photos/hem3-cancer-risk-map.jpg" alt="Map of increased cancer risk per million people around South Portland tank farms, modeled with the EPA HEM-3 tool" loading="lazy">
+        <figcaption>Cancer risk per million people around South Portland&rsquo;s tank farms, modeled with EPA HEM-3 by environmental engineer David Falatko.</figcaption>
+      </figure>
+      <p>This map summarizes the areas at greatest risk for increased cancer incidence by color. It was created by South Portland environmental engineer David Falatko using the EPA risk assessment model HEM-3. The Human Exposure Model (HEM-3) is a streamlined yet rigorous tool that can be used to estimate ambient concentrations, human exposures and health risks that may result from air pollution emissions from complex industrial facilities.</p>
+      <p>The risk factors are based upon the permitted levels of emissions for each tank farm except Portland Pipeline Co. LLC, whose tanks were no longer in use. However, since that time, six to eight of the 23 tanks have been filled with crude oil. Refilling these tanks will result in an increase in the above risk estimates since the Portland Pipeline company was ranked with Sprague and Gulf as the largest permitted emitter of HAPs when in full operation.</p>
+      <p>The Maine CDC considers the acceptable cancer risk to be 10 additional cancers per million population. Other states such as Mass. and NY consider the acceptable increase to be 1 cancer per million of population.</p>
+      <p>What the model clearly shows is that the tank farms presently represent an unacceptable increase in cancer risk to fence-line neighborhoods. The solution is to require the capture of the harmful emissions using the best available control technology.</p>
+      <p><a href="assets/files/hem3-report-summary.pdf">HEM-3 report summary (PDF, 18 pages)</a></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>

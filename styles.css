@@ -1,0 +1,638 @@
+/* Protect South Portland — static site styles.
+   Palette mirrors the live site's Wix theme: dark-teal masthead family with an
+   orange call-to-action accent. Plain CSS, mobile-first. */
+
+:root {
+  --teal-950: #122a2c;
+  --teal-900: #1d3e40;
+  --teal-700: #2c6e70;
+  --teal-600: #3a7c80;
+  --teal-100: #e4f1f1;
+  --cyan-soft: #d5f6f6;
+  --orange: #de5021;
+  --orange-dark: #b8401a;
+  --orange-darker: #9c3615;
+  --ink: #26383a;
+  --muted: #5c6b6d;
+  --line: #dde8e8;
+  --paper: #ffffff;
+  --mist: #f6fafa;
+  --shadow: 0 2px 10px rgba(29, 62, 64, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+/* Older-visitor readability (2026-10-15): the root carries the type scale as
+   a percentage of the visitor's own browser font setting — 112.5% of it is
+   18px at browser defaults, and a visitor who enlarged their default keeps
+   their larger base. Body reading copy rides the root at exactly 1rem
+   (18px), and every rem-based secondary size on the site scales together
+   (see the masthead boundary note below). */
+
+html { scroll-behavior: smooth; font-size: 112.5%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+img { max-width: 100%; height: auto; }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- masthead + navigation ---------- */
+
+.masthead {
+  background: var(--teal-900);
+  border-bottom: 4px solid var(--orange);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* the seal is the single brand carrier (2026-10-15 de-dupe: the text
+   wordmark came off the masthead; its role as the accessible brand name
+   moved to the seal's alt) */
+
+.logo-link { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+
+.logo-link img { width: 96px; display: block; }
+
+.nav-toggle { display: none; }
+
+.nav-toggle-label {
+  display: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  font-weight: 800;
+  color: #fff;
+  user-select: none;
+}
+
+.main-nav > ul { list-style: none; display: flex; gap: 2px; margin: 0; padding: 0; align-items: center; }
+
+.main-nav li { position: relative; }
+
+.main-nav a {
+  display: block;
+  color: #e6f1f1;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.main-nav .nav-cta > a { color: #ffb28f; font-weight: 800; }
+
+.main-nav .nav-cta > a:hover { color: #fff; background: var(--orange); }
+
+.main-nav a:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+
+.main-nav .has-sub > a::after { content: " ▾"; font-size: 0.75rem; color: var(--teal-600); }
+
+.submenu {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: none;
+  min-width: 250px;
+  z-index: 60;
+}
+
+/* dropdown links sit on a white panel; the masthead's pale ink fails there,
+   so the menu text contrast fix gives the panel its own dark ink (2026-10-14
+   page-structure review, fix 1) */
+
+.submenu a { padding: 8px 12px; font-size: 0.9rem; color: var(--teal-900); }
+
+.main-nav .has-sub:hover > .submenu,
+.main-nav .has-sub:focus-within > .submenu { display: block; }
+
+/* same defect class on the white panel: the shared hover turns the link
+   white, so give submenu links their own hover */
+
+.main-nav .submenu a:hover { background: var(--teal-100); color: var(--teal-900); }
+
+/* row 40 (2026-10-15): one "Our work" item; the Past work flyout expands
+   IN-PANEL (no right-edge clipping at narrow desktop widths), reusing the
+   mobile submenu's indented visual language. It opens on hover or
+   focus-within exactly like the top panel; the @media block below already
+   renders it as a static nested list on mobile. */
+
+.main-nav .has-flyout > .submenu {
+  position: static;
+  box-shadow: none;
+  border: none;
+  border-left: 3px solid var(--teal-100);
+  border-radius: 0;
+  margin: 6px 0 2px 6px;
+  padding: 2px 0 2px 8px;
+  min-width: 0;
+}
+
+/* Masthead boundary (2026-10-15 readability re-measure): the older-visitor
+   root scale (112.5%) enlarges every rem-based nav size by 12.5%; at 0.95rem
+   that grew the single-row desktop nav to 1072px of need against the 1060px
+   content cap (1100px border-box inner minus 40px padding) and squeezed the
+   seal image (the only shrinkable element) to 84px — violating the "row
+   never squeezed" lockup. Nav links settle at 0.9rem (16.2px, still larger
+   than the pre-bump 15.2px) with link gaps halved to 2px: nav row 909px
+   measured via the unshrunken flex read at 1440, content = seal 96px +
+   16px gap + 909 = 1021. Boundary: 1021 + 40px masthead padding = 1061
+   (overlay scrollbars), + ~16px classic-scrollbar tax = 1077, + 30px
+   variance margin = 1107, rounded up to 1120.
+   At or below 1120 the clean MENU pattern owns the band; above it the
+   seal + single-row nav compose with the row never squeezed. */
+
+@media (max-width: 1120px) {
+  .nav-toggle-label { display: block; }
+
+  /* fix 6 (page-structure review): the toggle checkbox is visually hidden
+     but keyboard-focusable — Space on it opens the menu, and the
+     :focus-visible outline lands on the MENU label. Desktop keeps it
+     display:none: there the plain nav links are already in the tab order,
+     and a focusable invisible checkbox would be an unindicated tab stop. */
+  .nav-toggle {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .nav-toggle:focus-visible + .nav-toggle-label {
+    outline: 3px solid var(--cyan-soft);
+    outline-offset: 2px;
+  }
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .nav-toggle:checked ~ .main-nav { display: block; }
+  .main-nav > ul { flex-direction: column; align-items: stretch; padding: 10px 16px 18px; gap: 2px; }
+  .submenu {
+    position: static;
+    display: block;
+    box-shadow: none;
+    border: none;
+    border-left: 3px solid var(--teal-100);
+    border-radius: 0;
+    padding: 2px 0 2px 8px;
+    margin: 2px 0 6px;
+  }
+
+  /* fix 1 (page-structure review): the phone menu panel is white; dark ink
+     for menu links, dark-orange for the Act now nav item (5.55:1) */
+
+  .main-nav a { color: var(--teal-900); }
+  .main-nav a:hover { background: var(--teal-100); color: var(--teal-900); }
+  .main-nav .nav-cta > a { color: var(--orange-dark); }
+  .main-nav .nav-cta > a:hover { background: var(--orange-dark); color: #fff; }
+}
+
+/* ---------- action banner (ledger row 5: very top of homepage) ----------
+   Single-hero composition 2026-10-14: the who-we-are mission line (ledger
+   row 27) folds into the banner as a quiet sign-off under the CTA instead
+   of stacking a second hero block above the hero photo. */
+
+.banner {
+  background: var(--teal-900);
+  color: #fff;
+}
+
+.banner__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 26px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.banner__headline {
+  margin: 0;
+  color: inherit;
+  font-size: clamp(1.2rem, 2.6vw, 1.6rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  max-width: 46rem;
+}
+
+.banner__meta { margin: 0; font-size: 0.95rem; color: var(--cyan-soft); }
+
+/* mission line folded in as the banner's sign-off (secondary type) */
+
+.banner__signoff {
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  width: 100%;
+  max-width: 46rem;
+  padding-top: 12px;
+}
+
+.banner__mission {
+  margin: 0;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-block;
+  padding: 11px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+/* fix 5 (page-structure review): white on --orange is 3.98:1; white on
+   --orange-dark is 5.55:1, and the hover steps darker still */
+
+.btn--cta { background: var(--orange-dark); color: #fff; }
+.btn--cta:hover { background: var(--orange-darker); }
+
+.btn--ghost { background: transparent; color: var(--teal-900); border-color: var(--teal-900); }
+.btn--ghost:hover { background: var(--teal-100); }
+
+.btn--light { background: #fff; color: var(--teal-900); }
+.btn--light:hover { background: var(--teal-100); }
+
+/* ---------- generic sections ---------- */
+
+.section { padding: 46px 0; }
+
+/* compact who-we-are strip: the About paragraph sits under the hero photo,
+   demoted so only the banner reads as a hero (2026-10-14 design pass) */
+
+.section--intro { padding: 26px 0; }
+
+/* reading copy (prose, cards, placeholder notes) inherits the body's 1rem
+   floor — 18px at default root, scales with each visitor's browser setting */
+
+.prose--intro p { color: var(--muted); }
+
+/* fix 2 (page-structure review): the strip's links read as a two-item link
+   row after the paragraph, not a run-on inside the sentence flow */
+
+.link-row { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 26px; margin: 10px 0 0; padding: 0; font-weight: 700; font-size: 0.95rem; }
+
+.link-row li { margin: 0; }
+
+.section--mist { background: var(--mist); }
+
+.section--teal { background: var(--teal-900); color: #fff; }
+.section--teal h2, .section--teal h3 { color: #fff; }
+.section--teal a { color: var(--cyan-soft); }
+
+.kicker {
+  display: block;
+  color: var(--teal-600);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+
+h1 { color: var(--teal-900); font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.2; margin: 6px 0 18px; letter-spacing: -0.01em; }
+
+h2 { color: var(--teal-900); font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.25; margin: 0 0 14px; letter-spacing: -0.01em; }
+
+h3 { color: var(--teal-700); margin: 1.6em 0 0.5em; }
+
+/* heading-order fix (2026-10-15 staging audit, digest #4): pages that held
+   h3s directly under their h1 retag them to h2 so the outline runs
+   sequential; this class carries the retired h3's exact look (size, color,
+   margins) so no copy or design changes ride along. tank-farms.html keeps
+   its prose margins; the card--photo override matches .card--photo h3. */
+
+h2.h3-look { font-size: 1em; color: var(--teal-700); margin: 1.6em 0 0.5em; }
+
+.card--photo h2.h3-look { margin: 0 0 8px; }
+
+p { margin: 0 0 1em; }
+
+.lede { font-size: 1.13rem; }
+
+a { color: var(--teal-700); }
+
+a:hover { color: var(--teal-900); }
+
+.prose ul li { margin-bottom: 0.55em; }
+
+blockquote {
+  margin: 0 0 1em;
+  padding: 12px 18px;
+  border-left: 4px solid var(--teal-600);
+  background: var(--teal-100);
+  border-radius: 0 10px 10px 0;
+  color: var(--teal-900);
+}
+
+.callout {
+  background: var(--cyan-soft);
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  margin: 1.2em 0;
+}
+
+.callout p:last-child { margin-bottom: 0; }
+
+/* ---------- tank-farms map section (ledger rows 1, 3, 7) ---------- */
+
+.map-frame {
+  max-width: 980px;
+  margin: 0 auto 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.map-frame iframe {
+  display: block;
+  width: 100%;
+  height: min(80vh, 660px);
+  border: 0;
+}
+
+@media (max-width: 700px) { .map-frame iframe { height: 460px; } }
+
+.map-note { text-align: center; color: var(--muted); font-size: 0.92rem; margin: 0 auto 26px; max-width: 60rem; }
+
+/* ---------- campaign teaser cards ---------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 20px 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.card h3 { margin: 0 0 8px; }
+
+.card p { color: var(--muted); flex: 1; }
+
+.card .card__more { font-weight: 800; text-decoration: none; }
+
+/* ---------- row 48: odor-report dual channel (get-involved) ---------- */
+
+/* The two reporting mechanisms read as peer actions: one grid, side by side
+   above 720px and stacked below it. No fixed widths, so nothing overflows
+   at 412px (the base .card sizing is min-content-exempt: grid items default
+   to min-width auto, and the cells hold only wrapping text). */
+.report-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin: 0 0 1em;
+}
+
+@media (min-width: 720px) {
+  .report-actions { grid-template-columns: 1fr 1fr; }
+}
+
+/* the dictated copy is primary reading text, not caption gray, and must not
+   be stretched by the base card's flex column when a sibling runs longer */
+.report-actions__card p { color: var(--ink); flex: none; }
+/* both cards are flex columns with no stretching copy, so the button
+   paragraph sinks to the card bottom and the two buttons land on one
+   baseline when the cards sit side by side */
+.report-actions__card p:last-child { margin: auto 0 0; }
+
+/* ---------- petition strip (kept from live homepage) ---------- */
+
+.petition {
+  background: var(--cyan-soft);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.petition__inner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 30px; justify-content: space-between; padding: 26px 20px; }
+
+/* ---------- contact / council lists ---------- */
+
+.contact-list { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 40px; }
+
+.contact-list li { break-inside: avoid; margin-bottom: 10px; }
+
+@media (max-width: 720px) { .contact-list { columns: 1; } }
+
+.contact-list a { font-weight: 600; }
+
+/* ---------- footer ---------- */
+
+.footer {
+  background: var(--teal-950);
+  color: #e6f1f1;
+  margin-top: 0;
+  padding: 40px 0 28px;
+}
+
+.footer a { color: #bfeaf4; text-decoration: none; }
+
+.footer a:hover { color: #fff; text-decoration: underline; }
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 1.2fr;
+  gap: 26px;
+  align-items: start;
+}
+
+@media (max-width: 860px) { .footer__grid { grid-template-columns: 1fr; } }
+
+.footer img { width: 150px; display: block; }
+
+.footer__links ul { list-style: none; margin: 0; padding: 0; columns: 2; }
+
+.footer__links li { margin-bottom: 8px; break-inside: avoid; }
+
+.footer__donate p { color: #cfe6e6; }
+
+.footer__donate .btn { margin-top: 6px; }
+
+/* the footer's link color out-specifies .btn--cta and left the DONATE
+   button #bfeaf4-on-orange-dark (4.30:1, Lighthouse-found 2026-10-15);
+   the CTA keeps white on the orange fill (5.55:1) */
+
+.footer .btn--cta { color: #fff; }
+
+.footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  margin-top: 26px;
+  padding-top: 18px;
+  font-size: 0.88rem;
+  color: #b7cdcd;
+}
+
+.social { display: flex; gap: 10px; }
+
+.social a {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* ---------- photography (copied from the live Wix site assets) ---------- */
+
+.hero-band {
+  min-height: 320px;
+  background-position: center 40%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* homepage-only shorter band: the tanks photo sits between the banner and
+   the who-we-are strip, so it stays punctuation, not a third hero-like
+   block (2026-10-14 design pass) */
+
+.hero-band--low { min-height: 260px; }
+
+@media (max-width: 700px) { .hero-band { min-height: 190px; } }
+
+.figure { margin: 24px 0; }
+
+.figure img {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.figure figcaption {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.figure--half { max-width: 620px; }
+
+/* campaign cards with a photo head */
+
+.card--photo { padding: 0 0 4px; }
+
+.card--photo .card__img {
+  display: block;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 13px 13px 0 0;
+}
+
+.card--photo .card__body { padding: 16px 20px 12px; }
+
+.card--photo h3 { margin: 0 0 8px; }
+
+.card--photo p { color: var(--muted); flex: 1; }
+
+.card--photo .card__more { display: inline-block; padding-bottom: 12px; }
+
+/* ---------- dated next-event strip (DATED: remove after 2026-10-27 workshop) ---------- */
+
+.dated-strip {
+  background: var(--cyan-soft);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.dated-strip a { color: var(--orange-dark); font-weight: 800; }
+
+.dated-strip a:hover { color: var(--orange); text-decoration: none; }
+
+.dated-strip p {
+  margin: 0;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+/* ---------- placeholder blocks (operator decisions) ---------- */
+
+.placeholder-block {
+  border: 2px dashed var(--orange);
+  background: #fdf1ec;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--ink);
+  margin: 1.2em 0;
+}
+
+.placeholder-block strong { color: var(--orange-dark); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem; display: block; margin-bottom: 4px; }
+
+.page-head { padding: 40px 0 10px; }
+
+.section .wrap > :last-child { margin-bottom: 0; }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: #fff;
+  color: var(--teal-900);
+  padding: 8px 14px;
+  z-index: 100;
+}
+
+.skip-link:focus { left: 8px; }

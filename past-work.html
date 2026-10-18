@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Past work — Protect South Portland</title>
+<meta name="description" content="Historical campaigns from Protect South Portland: the Comprehensive Plan climate-resilience advocacy (2024) and the Yard South proposal response (2023-2024).">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">Past work</span>
+    <h1>Campaigns moved to the history books</h1>
+    <p class="lede">PSP&rsquo;s focus is back on the tanks. The current work lives on the <a href="index.html">homepage</a> and in <a href="act-now.html">Act Now</a>; the campaigns below are archived so the record stays public.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <span class="kicker">Historical campaign &mdash; Comprehensive Plan advocacy, 2024</span>
+    <h2>The Comprehensive Plan for South Portland is mandated to be updated every 12 years</h2>
+    <figure class="figure">
+      <img src="assets/photos/sea-level-map.webp" alt="Map of sea level rise and coastal flood exposure around Portland Harbor and South Portland" loading="lazy">
+      <figcaption>Coastal flood exposure around Portland Harbor and South Portland&rsquo;s working waterfront.</figcaption>
+    </figure>
+    <div class="prose">
+      <p>The Comprehensive Plan forms the &ldquo;foundation for community actions, policies and regulations.&rdquo; Come to a meeting in person or watch via livestream, and tell the committee what the city&rsquo;s goals should be.</p>
+      <p>After the January 13th storm surge and flooding, PSP and the community advocated for the Comprehensive Plan Committee to move its climate goals from the last of five goals to the number one goal for future planning and development. Placing climate resilience as the number one goal is a first in South Portland history. We are grateful to have such responsive Comprehensive Plan Committee members.</p>
+      <p><strong>THE COMPREHENSIVE PLAN COMMITTEE MADE CLIMATE READINESS THE CITY&rsquo;S #1 GOAL:</strong></p>
+      <p><strong>1. Ecology and Climate Readiness.</strong> South Portland will collectively take responsibility for preserving and protecting its natural places and preparing for the impacts of climate change. Goals include:</p>
+      <ul>
+        <li>Plan for sea level rise &amp; coastal storms: at least 1.5 &ndash; 3 feet of sea level rise by 2050 and 3.8 &ndash; 8.7 feet by 2100 and increased risks from storms.</li>
+        <li>Become climate resilient against extreme weather: adapt codes, ordinances, policies, and services to prepare for the impacts of climate change.</li>
+        <li>Protect &amp; enhance the natural environment: protect South Portland&rsquo;s coastline, green spaces, and natural habitat.</li>
+      </ul>
+      <p>We encourage citizens to work with the Comprehensive Plan Committee to support the climate goals as the details of the plan are created. Visit <a href="https://southportland2040.com">SouthPortland2040.com</a> to catch up on progress of the plan and to learn how you can participate. Email or call your city council members. You can help shape the future of South Portland.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--teal">
+  <div class="wrap">
+    <span class="kicker" style="color:#9adfe3">Historical campaign &mdash; Yard South proposal, 2023&ndash;2024 (application withdrawn Nov. 4, 2024)</span>
+    <h2>Local concern arose over health and safety at the proposed Yard South development</h2>
+    <div class="prose">
+      <p>Yard South was a large-scale residential development proposed next to scenic Bug Light Park. As described in a site walk at the time, Yard South, in phase one, planned to build three or four 18-story towers with 1200 or more residential units. The developers claimed there would be 8&ndash;10% affordable housing units provided. The owner filed the contract-zone and zoning amendments on July 31, 2024; the applicant withdrew the application effective Nov. 4, 2024, and the City&rsquo;s record states no further processing of it will occur.</p>
+      <p>For the following reasons, PSP raised grave health and safety concerns about this proposed zone change:</p>
+      <ol>
+        <li>D.E.P. Emissions Permits for the adjacent Gulf and Portland Pipeline terminals combined allow:
+          <ul>
+            <li>100+ tons of airborne Volatile Organic Compounds per year</li>
+            <li>DEP monitoring has documented some of the city&rsquo;s highest levels of petroleum-associated cancer-causing benzene and other health-damaging chemicals in this area</li>
+            <li>30+ tons of airborne hazardous air pollutants per year</li>
+          </ul>
+        </li>
+        <li>The proximity of bulk petroleum storage facilities to existing residential, community college, and other land uses is already a serious safety and evacuation concern for a catastrophic fire/explosion/petroleum spill event.</li>
+        <li>This area is a contaminated brownfield.</li>
+        <li>The 2020 Maine Climate Council Scientific and Technical Committee Report suggests preparing for 8.8 feet of sea level rise by 2100. Tank farms pose a threat from flooding with sea level rise and storm surges as well as extreme weather conditions. The future public expense to maintain this area as dry land or to mitigate future flooding is likely to be considerable. There is also concern that buried toxins will leach into flood waters and be released into Casco Bay. Meanwhile existing neighborhoods and all So. Portland tank farms will need protection from heightened water levels.</li>
+      </ol>
+      <p>Because of these concerns, before any zoning change, Protect South Portland was and remains a strong advocate for:</p>
+      <ol>
+        <li>Tank emission mitigation</li>
+        <li>Sea level remediation</li>
+        <li>Publicly informed clear emergency evacuation plan</li>
+      </ol>
+      <p>At the time, PSP encouraged residents to raise questions and concerns with the councilors then serving (contact list current as of 2024):</p>
+      <ul class="contact-list">
+        <li>Misha Pride: <a href="mailto:mpride@southportland.org">mpride@southportland.org</a> | (207) 749-7817</li>
+        <li>Linda Cohen: <a href="mailto:lcohen@southportland.org">lcohen@southportland.org</a> | (207) 831-9574</li>
+        <li>Rachael Coleman: <a href="mailto:rcoleman@southportland.org">rcoleman@southportland.org</a> | (207) 272-0762</li>
+        <li>Steven Riley: <a href="mailto:sriley@southportland.org">sriley@southportland.org</a> | (207) 831-4154</li>
+        <li>Elyse Tipton: <a href="mailto:etipton@southportland.org">etipton@southportland.org</a> | (207) 632-8983</li>
+        <li>Richard Matthews: <a href="mailto:rmatthews@southportland.org">rmatthews@southportland.org</a> | (207) 216-7543</li>
+        <li>Natalie West: <a href="mailto:nwest@southportland.org">nwest@southportland.org</a></li>
+      </ul>
+      <p>Today, <a href="act-now.html">Act now</a> carries the current email-the-Council flow and <a href="get-involved.html">Get involved</a> lists today&rsquo;s contacts.</p>
+      <p>If you are interested in having your voice heard in-person, public comment on any subject is allowed for up to 3 minutes at all City Council meetings. <a href="https://southportland-gov.community.diligentoneplatform.com/Portal/">Click here</a> to find the schedules and agendas for City Council and Comprehensive Plan meetings.</p>
+      <p>Yard South raises a range of other issues, including greatly increased traffic and the widening of Broadway. For more information at the time, residents could call or email Cathy Chapman.</p>
+      <p>Read the full Yard South archive: <a href="yard-south-proposal.html">Yard South Proposal page</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <span class="kicker">More from the archive</span>
+    <h2>The ordinance campaigns</h2>
+    <div class="prose">
+      <p>Three of PSP&rsquo;s ordinance campaigns are archived on their own pages &mdash; each won a lasting protection for South Portland&rsquo;s air, soil and bay:</p>
+      <ul>
+        <li><strong><a href="clear-skies.html">Clear Skies</a></strong> &mdash; the 2014 ordinance banning the loading of crude (especially tar sands crude) onto tankers in the harbor, upheld through eight years of litigation.</li>
+        <li><strong><a href="fertilizer-ban.html">Fertilizer Ban</a></strong> &mdash; the synthetic-fertilizer ordinance passed in November 2020, protecting Casco Bay from nitrogen runoff.</li>
+        <li><strong><a href="pesticides.html">Pesticides</a></strong> &mdash; the Bees, Bays and Backyards ordinance education program behind South Portland&rsquo;s pesticide rules.</li>
+      </ul>
+      <div class="card-grid">
+        <div class="card card--photo">
+          <img class="card__img" src="assets/photos/kites.jpg" alt="Kites flying in a clear blue sky over South Portland" loading="lazy">
+          <div class="card__body">
+          <h3>Clear Skies</h3>
+          <p>Clean air over South Portland, eight years after the ordinance stood up to Big Oil.</p>
+          <a class="card__more" href="clear-skies.html">READ THE ARCHIVE →</a>
+          </div>
+        </div>
+        <div class="card card--photo">
+          <img class="card__img" src="assets/photos/organic-lawn-flowers.jpg" alt="White clover and wildflowers growing in an organic lawn" loading="lazy">
+          <div class="card__body">
+          <h3>Fertilizer Ban</h3>
+          <p>Organic land care keeps Casco Bay blue and the soil alive.</p>
+          <a class="card__more" href="fertilizer-ban.html">READ THE ARCHIVE →</a>
+          </div>
+        </div>
+        <div class="card card--photo">
+          <img class="card__img" src="assets/photos/sunflower-bee.jpg" alt="A bee visiting a sunflower" loading="lazy">
+          <div class="card__body">
+          <h3>Pesticides</h3>
+          <p>Bees, Bays and Backyards: protecting pollinators citywide.</p>
+          <a class="card__more" href="pesticides.html">READ THE ARCHIVE →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>

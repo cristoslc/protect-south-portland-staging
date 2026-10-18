@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  var style = document.createElement("style");
+  style.textContent =
+    ".staging-gate body{visibility:hidden!important}" +
+    ".staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;" +
+    "align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;" +
+    "font:16px/1.5 'Segoe UI',system-ui,sans-serif}" +
+    ".staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;" +
+    "max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}" +
+    ".staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}" +
+    ".staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}" +
+    ".staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;" +
+    "border-radius:8px;font:inherit}" +
+    ".staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;" +
+    "background:#b8401a;color:#fff;font-weight:800;cursor:pointer}" +
+    ".staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsletter — Protect South Portland</title>
+<meta name="description" content="Subscribe to the Protect South Portland newsletter and read past issues.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">Newsletter</span>
+    <h1>Subscribe to our newsletter</h1>
+    <div class="prose">
+      <div class="callout">
+        <p style="margin-bottom:0"><strong>To subscribe, send a message to <a href="mailto:protectsouthportland@gmail.com?subject=Subscribe%20to%20newsletter">protectsouthportland@gmail.com</a> with &ldquo;Subscribe&rdquo; in the subject line.</strong></p>
+      </div>
+
+      <h2>Newsletter archive</h2>
+      <p>The January 13, 2021 issue carried the campaign news from Augusta: the state DEP&rsquo;s LD 1915 report on tank-emissions measurement and PSP&rsquo;s response. Tank-emissions measurement is also what the Legislature&rsquo;s Environment &amp; Natural Resources Committee has taken up.</p>
+      <ul>
+        <li><a href="assets/files/newsletter-2021-01-13.pdf">January 13, 2021 (PDF)</a></li>
+        <li><a href="assets/files/newsletter-2020-12-13.pdf">December 13, 2020 (PDF)</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="dated-strip" role="note">
+  <p>Next: City Council workshop - Tuesday, Oct. 27, 6 p.m., South Portland High School. <a href="act-now.html">Act now.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>
