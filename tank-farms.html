@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<style>
+.staging-gate body{visibility:hidden!important}
+.staging-gate-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#122a2c;color:#e6f1f1;font:16px/1.5 'Segoe UI',system-ui,sans-serif}
+.staging-gate-card{background:#fff;color:#26383a;padding:22px 26px;border-radius:14px;max-width:22rem;box-shadow:0 2px 14px rgba(0,0,0,.35)}
+.staging-gate-title{margin:0 0 10px;font-weight:800;color:#1d3e40}
+.staging-gate-label{display:block;margin-bottom:6px;font-size:.85rem;color:#5c6b6d}
+.staging-gate-input{box-sizing:border-box;width:100%;padding:9px 10px;border:1px solid #dde8e8;border-radius:8px;font:inherit}
+.staging-gate-submit{margin-top:10px;padding:9px 16px;border:0;border-radius:999px;background:#b8401a;color:#fff;font-weight:800;cursor:pointer}
+.staging-gate-wrong{margin:8px 0 0;color:#b8401a;font-size:.85rem}
+</style>
+<script>
+(function () {
+  /* Staging review gate (row 42): deterrence-grade, staging mirror only. */
+  var REQUIRED = "fc951e44474a1600c1deb43d775c49a01da0064f29ced85c967cfa6d65a833b7";
+  var COOKIE = "psp_staging";
+  var docEl = document.documentElement;
+  docEl.className += " staging-gate";
+  function cookieValue() {
+    var parts = document.cookie.split(/;\s*/);
+    for (var i = 0; i < parts.length; i++) {
+      var pair = parts[i].split("=");
+      if (pair[0] === COOKIE) return pair[1];
+    }
+    return null;
+  }
+  function reveal() {
+    docEl.className = docEl.className.replace(" staging-gate", "");
+    var overlay = document.querySelector(".staging-gate-overlay");
+    if (overlay && overlay.parentElement) overlay.parentElement.removeChild(overlay);
+  }
+  function hex(buffer) {
+    var out = [], bytes = new Uint8Array(buffer);
+    for (var i = 0; i < bytes.length; i++) out.push(("0" + bytes[i].toString(16)).slice(-2));
+    return out.join("");
+  }
+  function boot() {
+    if (cookieValue() === REQUIRED) { reveal(); return; }
+    if (!window.crypto || !crypto.subtle) {
+      // fail closed with a plain message: no digest API, no check, no page
+      // (real staging serves over TLS or 127.0.0.1, where subtle exists)
+      card = document.createElement("div");
+      card.className = "staging-gate-card";
+      card.textContent = "This browser cannot verify the access phrase.";
+      var shell = document.createElement("div");
+      shell.className = "staging-gate-overlay";
+      shell.appendChild(card);
+      docEl.appendChild(shell);
+      return;
+    }
+    var overlay = document.createElement("div");
+    overlay.className = "staging-gate-overlay";
+    var card = document.createElement("div");
+    card.className = "staging-gate-card";
+    card.innerHTML = '<p class="staging-gate-title">Staging review</p>' +
+      '<form><label class="staging-gate-label" for="staging-gate-phrase">Enter access phrase</label>' +
+      '<input class="staging-gate-input" id="staging-gate-phrase" type="password" autocomplete="off">' +
+      '<button class="staging-gate-submit" type="submit">Enter</button>' +
+      '<p class="staging-gate-wrong" hidden>Access phrase not recognized.</p></form>';
+    overlay.appendChild(card);
+    docEl.appendChild(overlay);
+    var input = card.querySelector(".staging-gate-input");
+    card.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value))
+        .then(function (digest) {
+          if (hex(digest) === REQUIRED) {
+            document.cookie = COOKIE + "=" + REQUIRED +
+              "; Path=/; Secure; SameSite=Lax; Max-Age=2592000";
+            reveal();
+          } else {
+            card.querySelector(".staging-gate-wrong").hidden = false;
+            input.value = "";
+            input.focus();
+          }
+        });
+    });
+    input.focus();
+    window.addEventListener("load", function () {
+      /* the embedded map iframe can take focus as it loads; take it back */
+      if (document.querySelector(".staging-gate-overlay")) input.focus();
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>South Portland Tank Farms — Protect South Portland</title>
+<meta name="description" content="South Portland Tank Farms: where things stand (October 2026 fence-line data), the 120 tanks and the interactive map, health effects of VOCs, and the campaign's history of pushing for emissions rules.">
+<link rel="icon" type="image/png" href="assets/psp-favicon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <div class="masthead__inner">
+    <a class="logo-link" href="index.html">
+      <img src="assets/psp-logo.png" alt="Protect South Portland">
+    </a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label class="nav-toggle-label" for="nav-toggle" aria-label="Toggle navigation">MENU</label>
+    <nav class="main-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li class="nav-cta"><a href="act-now.html">Act now</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-sub">
+          <a href="our-campaigns.html" aria-haspopup="true" aria-expanded="false">Our work</a>
+          <ul class="submenu">
+            <li><a href="tank-farms.html">South Portland Tank Farms</a></li>
+            <li><a href="coastal-flooding.html">Coastal Flooding</a></li>
+            <li><a href="library.html">Library</a></li>
+            <li class="has-sub has-flyout">
+              <a href="past-work.html" aria-haspopup="true" aria-expanded="false">Past work</a>
+              <ul class="submenu flyout">
+                <li><a href="past-work.html">All past work</a></li>
+                <li><a href="yard-south-proposal.html">Yard South Proposal</a></li>
+                <li><a href="clear-skies.html">Clear Skies</a></li>
+                <li><a href="fertilizer-ban.html">Fertilizer Ban</a></li>
+                <li><a href="pesticides.html">Pesticides</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="press.html">Press</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="content">
+<section class="section page-head">
+  <div class="wrap">
+    <span class="kicker">The campaign</span>
+    <h1>South Portland Tank Farms</h1>
+    <div class="callout">
+      <h2 class="h3-look" style="margin-top:0" id="where-things-stand">Where things stand &mdash; October 2026</h2>
+      <p>State <strong>fence-line monitoring data has now been collected at the tank farms</strong>. Concerning readings came in near every facility. At <strong>Citgo on Mechanic Street</strong> in Pleasantdale, the air <strong>consistently and dramatically exceeded the state standard for benzene</strong>, a well-studied carcinogen. At <strong>South Portland Terminal on Lincoln Street</strong>, one reading registered <strong>12 times the state&rsquo;s ambient air quality standard</strong>.</p>
+      <p>The raw monitoring summaries are already public on the City&rsquo;s <a href="https://www.southportland.gov/522/Air-Quality-Concerns-Monitoring">Air Quality page</a>: the <a href="https://www.southportland.gov/DocumentCenter/View/4819/September-8-2026-South-Portland-24-Hour-Volatile-Organic-Compounds-Air-Monitoring-Results-Analysis-and-Summary-Report-PDF">September 2026 24-hour VOC monitoring results (PDF)</a> and the <a href="https://www.southportland.gov/DocumentCenter/View/5116/October-6-2026-Petroleum-Storage-Facility-Fenceline-Air-Monitoring-Three-Year-Data-Summary-PDF">October 6, 2026 fence-line three-year data summary (PDF)</a>. DEP and CDC analysis of the fence-line data is expected imminently. When the state publishes its analysis, PSP will post it here along with our response.</p>
+      <p style="margin-bottom:0">The City Council has not set a date for its next workshop. You can <a href="act-now.html">email the Council now</a> to ask it to require better technology at the tank farms.</p>
+    </div>
+      <div class="callout">
+        <h3 style="margin-top:0">Now is the time to act:</h3>
+        <ul>
+          <li><strong>The City Council took no vote at its Oct. 27 workshop and has not set a date for the next one.</strong></li>
+          <li><strong>Email the City Council</strong> and ask it to require better technology at the tank farms, and to make public what special counsel advises about the city&rsquo;s authority. City Council email addresses are found here: <a href="https://southportland.gov/411/City-Council">southportland.gov/411/City-Council</a>.</li>
+          <li><strong>Email</strong> <a href="mailto:protectsouthportland@gmail.com">protectsouthportland@gmail.com</a> to get plugged into local tank farm efforts.</li>
+        </ul>
+        <p style="margin-bottom:0"><a class="btn btn--cta" href="act-now.html">Act now</a> &nbsp; <a class="btn btn--ghost" href="https://southportland.gov/411/City-Council">City Council emails</a></p>
+      </div>
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="prose">
+      <h2>120 large petroleum tanks, run by six major oil companies</h2>
+      <p>There are <strong>120 large petroleum tanks in South Portland</strong>, run by six major oil companies. Residents have raised concerns for decades that the tanks compromise air quality for the people who live, work and play very close to them. New state data measuring air quality along the fence lines of these tank farms has confirmed what we&rsquo;ve felt, and smelled, for years: <strong>They are bad neighbors, profiting off harm to our community.</strong></p>
+      <p>Concerning readings were collected near all the tanks, but two tank farms stand out. At Citgo on Mechanic Street, which sits very close to homes in Pleasantdale, monitors found the air <strong>consistently and dramatically exceeded state standards for benzene, a well-studied carcinogen.</strong> Benzene measurements were highest at South Portland Terminal on Lincoln Street, bordered by businesses, homes and Forest City Cemetery, with one reading registering <strong>12 times higher</strong> than the state&rsquo;s ambient air quality standard, meant to protect people from cancer risk.</p>
+      <figure class="figure">
+        <img src="assets/photos/tank-farms-aerial.jpg" alt="Aerial view of the oil storage tank farms along South Portland's waterfront" loading="lazy">
+        <figcaption>The tank farms along South Portland&rsquo;s working waterfront. Photo: Protect South Portland archives.</figcaption>
+      </figure>
+
+      <div class="map-frame">
+        <iframe src="map/embed.html" title="Interactive map of South Portland tank farms, nearby schools, child care and senior housing, the one-mile fence-line buffer, and DEP air monitors" loading="lazy"></iframe>
+      </div>
+      <p class="map-note">Use the slider inside the map to change the search radius around the fence lines. Facilities, schools and child care, the buffer and DEP air monitors are labeled.</p>
+
+      <p class="callout"><strong>How we got here:</strong> the court record, the legislation and the media coverage are in the <a href="tank-farms-history.html">campaign history</a>.</p>
+
+      <h2 id="health-effects-of-vocs">Health effects of VOCs</h2>
+      <p>Volatile Organic Compounds (VOCs) are made up of elements including Hazardous Air Pollutants (HAPs). Global was cited by the EPA for releasing twice their permitted VOCs for at least seven years. HAPs vary in their disease effects.</p>
+      <p>They hit the very young the hardest because they are growing rapidly and their resting metabolic rate is higher. They consume more oxygen per body weight than adults. This significantly increases their exposure to HAPs. Their airways are narrower and their mucous glands are larger. Irritations that might cause only a slight response in an adult could result in dangerous obstruction for a child. This obstruction can put them at risk for allergies and life threatening asthma.</p>
+      <p>For all of us, long-term exposure can harm the heart and circulatory system, the liver (our major organ of detoxification) and, most critically, the immune system. The genetics we inherit from our parents and past generations isn&rsquo;t necessarily what condemns us to the cancers, autoimmune diseases and other illnesses that we struggle with. Researchers now describe inherited DNA as a blueprint. It is the environmental challenges that potentially change the DNA that pulls the trigger for these diseases.</p>
+      <p>We know that increasing amounts of these VOCs in the air we breathe are a risk factor, especially for children, the elderly, pregnant women and people living near the source of these pollutants. We have heard testimony from people living in the vicinity of the Global tank farm that they have endured frequent severe headaches, and discomfort of breathing in the toxic smells emitted especially in the evenings.</p>
+
+      <h3>Cancer risk</h3>
+      <p><strong>Cancer Risk For Portland and South Portland Residents From Tank Farm Emissions Using the EPA HEM-3 Model</strong></p>
+      <p>Legend &mdash; Increased Cancer Risk Per Million People:</p>
+      <ul>
+        <li>Green squares: low-3, high-19</li>
+        <li>Yellow squares: low-20, high-89</li>
+        <li>Red squares: low-101, high-165</li>
+      </ul>
+      <figure class="figure">
+        <img src="assets/photos/hem3-cancer-risk-map.jpg" alt="Map of increased cancer risk per million people around South Portland tank farms, modeled with the EPA HEM-3 tool" loading="lazy">
+        <figcaption>Cancer risk per million people around South Portland&rsquo;s tank farms, modeled with EPA HEM-3 by environmental engineer David Falatko.</figcaption>
+      </figure>
+      <p>This map summarizes the areas at greatest risk for increased cancer incidence by color. It was created by South Portland environmental engineer David Falatko using the EPA risk assessment model HEM-3. The Human Exposure Model (HEM-3) is a streamlined yet rigorous tool that can be used to estimate ambient concentrations, human exposures and health risks that may result from air pollution emissions from complex industrial facilities.</p>
+      <p>The risk factors are based upon the permitted levels of emissions for each tank farm except Portland Pipeline Co. LLC, whose tanks were no longer in use. However, since that time, six to eight of the 23 tanks have been filled with crude oil. Refilling these tanks will result in an increase in the above risk estimates since the Portland Pipeline company was ranked with Sprague and Gulf as the largest permitted emitter of HAPs when in full operation.</p>
+      <p>The Maine CDC considers the acceptable cancer risk to be 10 additional cancers per million population. Other states such as Mass. and NY consider the acceptable increase to be 1 cancer per million of population.</p>
+      <p>What the model clearly shows is that the tank farms presently represent an unacceptable increase in cancer risk to fence-line neighborhoods. The solution is to require the capture of the harmful emissions using the best available control technology.</p>
+      <p><a href="assets/files/hem3-report-summary.pdf">HEM-3 report summary (PDF, 18 pages)</a></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="action-strip" role="note">
+  <p><a href="get-involved.html">Report every odor. Sign the petition.</a></p>
+</div>
+<footer class="footer">
+  <div class="wrap footer__grid">
+    <div>
+      <img src="assets/psp-logo.png" alt="Protect South Portland logo">
+    </div>
+    <div class="footer__links">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="our-campaigns.html">Our work</a></li>
+        <li><a href="tank-farms.html">Tank farms</a></li>
+        <li><a href="fertilizer-ban.html">Fertilizer ban</a></li>
+        <li><a href="coastal-flooding.html">Coastal flooding</a></li>
+        <li><a href="past-work.html">Past work</a></li>
+        <li><a href="library.html">Library</a></li>
+        <li><a href="press.html">Press</a></li>
+        <li><a href="yard-south-proposal.html">Yard South proposal</a></li>
+        <li><a href="clear-skies.html">Clear Skies</a></li>
+        <li><a href="pesticides.html">Pesticides</a></li>
+        <li><a href="newsletter.html">Newsletter</a></li>
+        <li><a href="get-involved.html">Get involved</a></li>
+        <li><a href="donate.html">Donate</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__donate">
+      <p>Help defend our <strong>COMMUNITY</strong>. Please donate to Protect South Portland.</p>
+      <a class="btn btn--cta" href="donate.html">Donate</a>
+    </div>
+  </div>
+  <div class="wrap footer__base">
+    <div class="social">
+      <a href="https://x.com/ProtectSoPo" rel="noopener">X</a>
+      <a href="https://www.facebook.com/protectsouthportland/" rel="noopener">Facebook</a>
+    </div>
+    <p class="credit">A special thank you goes out to Dan Woods and Karen Silverman for their photography donations.</p>
+  </div>
+</footer>
+<script>
+/* row-40 dropdown a11y — progressive enhancement only. The menus already
+   open and close in CSS (:hover and :focus-within; blur closes) with no
+   JavaScript at all; this script adds Escape-to-close (drop focus, the
+   :focus-within release closes the panel) and keeps aria-expanded truthful
+   on the two parent links, including the mobile static list where the
+   children are always visible at <=1120px. */
+(function () {
+  var nav = document.querySelector(".main-nav");
+  if (!nav) return;
+  var parents = nav.querySelectorAll(".has-sub > a");
+  var MOBILE = window.matchMedia("(max-width: 1120px)");
+  function sync() {
+    parents.forEach(function (a) {
+      var li = a.parentElement;
+      var open = MOBILE.matches || li.matches(":hover") || li.matches(":focus-within");
+      a.setAttribute("aria-expanded", String(open));
+    });
+  }
+  parents.forEach(function (a) {
+    ["focusin", "focusout", "mouseenter", "mouseleave"].forEach(function (type) {
+      a.addEventListener(type, function () { setTimeout(sync, 0); });
+    });
+  });
+  nav.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || !e.target.closest(".has-sub")) return;
+    e.preventDefault();
+    if (document.activeElement) document.activeElement.blur();
+    sync();
+  });
+  if (typeof MOBILE.addEventListener === "function") MOBILE.addEventListener("change", sync);
+  sync();
+})();
+</script>
+
+</body>
+</html>
